@@ -9,6 +9,7 @@ pipeline {
         stage('pods') {
             steps {
                 sh "kubectl get pods"
+                sh "minikube service shoestore1 --url"
             }
         }
     }
