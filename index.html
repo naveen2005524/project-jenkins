@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shoe Store</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body{
+      background:#f4f4f4;
+      color:#333;
+    }
+
+    /* Navbar */
+    nav{
+      background:#111;
+      color:white;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px 50px;
+      position:sticky;
+      top:0;
+    }
+
+    nav h1{
+      font-size:30px;
+      color:#ff9800;
+    }
+
+    nav ul{
+      display:flex;
+      list-style:none;
+      gap:25px;
+    }
+
+    nav ul li a{
+      color:white;
+      text-decoration:none;
+      font-size:18px;
+      transition:0.3s;
+    }
+
+    nav ul li a:hover{
+      color:#ff9800;
+    }
+
+    /* Hero Section */
+    .hero{
+      height:90vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      background:linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+      url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop');
+      background-size:cover;
+      background-position:center;
+      color:white;
+      flex-direction:column;
+    }
+
+    .hero h2{
+      font-size:60px;
+      margin-bottom:20px;
+    }
+
+    .hero p{
+      font-size:22px;
+      margin-bottom:25px;
+    }
+
+    .btn{
+      padding:14px 30px;
+      background:#ff9800;
+      border:none;
+      color:white;
+      font-size:18px;
+      border-radius:5px;
+      cursor:pointer;
+      transition:0.3s;
+    }
+
+    .btn:hover{
+      background:#e68900;
+    }
+
+    /* Products */
+    .products{
+      padding:60px 40px;
+      text-align:center;
+    }
+
+    .products h2{
+      font-size:40px;
+      margin-bottom:40px;
+    }
+
+    .product-container{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:25px;
+    }
+
+    .card{
+      background:white;
+      padding:20px;
+      border-radius:10px;
+      box-shadow:0 5px 15px rgba(0,0,0,0.1);
+      transition:0.3s;
+    }
+
+    .card:hover{
+      transform:translateY(-10px);
+    }
+
+    .card img{
+      width:100%;
+      height:220px;
+      object-fit:cover;
+      border-radius:10px;
+    }
+
+    .card h3{
+      margin:15px 0;
+    }
+
+    .price{
+      color:#ff9800;
+      font-size:22px;
+      margin-bottom:10px;
+    }
+
+    .add-cart{
+      background:#111;
+      color:white;
+      border:none;
+      padding:10px 20px;
+      cursor:pointer;
+      border-radius:5px;
+      transition:0.3s;
+    }
+
+    .add-cart:hover{
+      background:#ff9800;
+    }
+
+    /* Cart */
+    .cart-section{
+      background:#222;
+      color:white;
+      padding:40px;
+      text-align:center;
+    }
+
+    .cart-section h2{
+      margin-bottom:20px;
+    }
+
+    #cart-items{
+      margin-bottom:20px;
+    }
+
+    /* Footer */
+    footer{
+      background:#111;
+      color:white;
+      text-align:center;
+      padding:20px;
+    }
+
+    @media(max-width:768px){
+      .hero h2{
+        font-size:40px;
+      }
+
+      nav{
+        flex-direction:column;
+        gap:15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <h1>ShoeX</h1>
+
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#cart">Cart</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h2>Best Shoe Collection</h2>
+    <p>Stylish, Comfortable & Affordable Shoes</p>
+    <button class="btn">Shop Now</button>
+  </section>
+
+  <!-- Products -->
+  <section class="products" id="products">
+    <h2>Trending Shoes</h2>
+
+    <div class="product-container">
+
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop" alt="shoe">
+        <h3>Nike Air Max</h3>
+        <p class="price">$120</p>
+        <button class="add-cart" onclick="addToCart('Nike Air Max',120)">Add to Cart</button>
+      </div>
+
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=1200&auto=format&fit=crop" alt="shoe">
+        <h3>Adidas Runner</h3>
+        <p class="price">$95</p>
+        <button class="add-cart" onclick="addToCart('Adidas Runner',95)">Add to Cart</button>
+      </div>
+
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=1200&auto=format&fit=crop" alt="shoe">
+        <h3>Puma Sports</h3>
+        <p class="price">$80</p>
+        <button class="add-cart" onclick="addToCart('Puma Sports',80)">Add to Cart</button>
+      </div>
+
+      <div class="card">
+        <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?q=80&w=1200&auto=format&fit=crop" alt="shoe">
+        <h3>Reebok Classic</h3>
+        <p class="price">$110</p>
+        <button class="add-cart" onclick="addToCart('Reebok Classic',110)">Add to Cart</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Cart -->
+  <section class="cart-section" id="cart">
+    <h2>Shopping Cart</h2>
+
+    <div id="cart-items">
+      No items added
+    </div>
+
+    <h3>Total: $<span id="total">0</span></h3>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact">
+    <p>© 2026 ShoeX Website | All Rights Reserved</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    let total = 0;
+    let cartItems = [];
+
+    function addToCart(name, price){
+
+      cartItems.push(name);
+
+      total += price;
+
+      document.getElementById("total").innerText = total;
+
+      document.getElementById("cart-items").innerHTML =
+      cartItems.map(item => `<p>${item}</p>`).join('');
+
+      alert(name + " added to cart!");
+    }
+  </script>
+
+</body>
+</html>
