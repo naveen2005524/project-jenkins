@@ -9,7 +9,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh "docker rm -f shoestore || true"
-                sh "docker run -d -p 8080:80 --name shoestore2 shoestore:5"
+                sh "docker run -d -p 8081:80 --name shoestore2 shoestore:5"
             }
         }
     }
