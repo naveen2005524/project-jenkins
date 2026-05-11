@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "kubectl apply -f deployment.yml"
+                sh "kubectl apply -f deployment.yml "
             }
         }
         stage('pods') {
