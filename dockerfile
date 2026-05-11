@@ -4,6 +4,7 @@ RUN apk update
 RUN apk add apache2
 
 COPY index.html /var/www/localhost/htdocs/index.html
+COPY app.html /var/www/localhost/htdocs/app.html
 
 EXPOSE 80
 
