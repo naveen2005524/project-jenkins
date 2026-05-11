@@ -20,8 +20,8 @@ pipeline {
         stage('remove') {
             steps {
                 sh "docker rm -f shoestore5 || true"
-                sh "sudo docker rm $(sudo docker ps -a -q)"
-                sh "sudo docker rmi $(sudo docker images -a -q)"
+                sh "sudo docker container prune"
+                sh "sudo docker image prune"
             }
         }
     }
