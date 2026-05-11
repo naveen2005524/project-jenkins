@@ -3,12 +3,13 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh "docker build -t shoestore:${env.BUILD_ID} ."
+                sh "docker build -t shoestore:5 ."
             }
         }
         stage('Deploy') {
             steps {
-                sh "docker run -d -p 8080:80 --name shoestore shoestore:${env.BUILD_ID}"
+                sh "docker rm -f shoestore || true"
+                sh "docker run -d -p 8080:80 --name shoestore2 shoestore:5"
             }
         }
     }
