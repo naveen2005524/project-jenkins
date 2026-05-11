@@ -2,24 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: shoestore
+  name: shoestore1
 
 spec:
   replicas: 1
 
   selector:
     matchLabels:
-      app: shoestore
+      app: shoestore1
 
   template:
     metadata:
       labels:
-        app: shoestore
+        app: shoestore1
 
     spec:
       containers:
-      - name: shoestore
-        image: shoestore:1
+      - name: shoestore1
+        image: shoestore:5
         imagePullPolicy: Never
 
         ports:
@@ -30,10 +30,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: shoestore
+  name: shoestore1
 spec:
   selector:
-    app: shoestore
+    app: shoestore1
   ports:
   - port: 80
     targetPort: 80
