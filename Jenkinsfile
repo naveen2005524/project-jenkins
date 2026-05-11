@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-        stage('Build') {
+        stage('kubectl') {
             steps {
                 sh "kubectl apply -f deployment.yml "
             }
