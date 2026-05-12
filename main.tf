@@ -106,19 +106,24 @@ resource "aws_instance" "my-ec2" {
 
   provisioner "file" {
     source = "./dockerfile"
-    destination = "/tmp/dockerfile"
+    destination = "/home/ubuntu/dockerfile"
   }
 
   provisioner "file" {
     source = "./index.html"
-    destination = "/tmp/index.html"
+    destination = "/home/ubuntu/index.html"
   }
 
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
       "sudo apt-get install docker.io -y",
-      "sudo docker build -t my-apache /tmp/dockerfile",
+      "sudo mkdir -p /home/ubuntu/var/www/localhost/htdocs/",
+      "sudo cp dockerfile /home/ubuntu/var/www/localhost/htdocs/",
+      "sudo cp index.html /home/ubuntu/var/www/localhost/htdocs/",
+      "sudo chmod +x /home/ubuntu/var/www/localhost/htdocs/dockerfile",
+      "cd /home/ubuntu/var/www/localhost/htdocs",
+      "sudo docker build -t my-apache .",
       "sudo docker run -d -p 5000:80 my-apache"
     ]
   }
