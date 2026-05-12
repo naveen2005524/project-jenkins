@@ -163,6 +163,7 @@ resource "aws_instance" "my-ec2" {
 
       # Load image into Minikube
       "minikube image load my-apache",
+      "cd /home/ubuntu/app",
 
       # Deploy to Kubernetes
       "kubectl apply -f /home/ubuntu/app/deployment.yml",
