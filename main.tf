@@ -119,62 +119,59 @@ resource "aws_instance" "my-ec2" {
     destination = "/home/ubuntu/deployment.yml"
   }
 
-   provisioner "remote-exec" {
+  provisioner "remote-exec" {
 
-    inline = [
+  inline = [
 
-      # Update packages
-      "sudo apt update -y",
+    "sudo apt update -y",
 
-      # Install Docker
-      "sudo apt install docker.io -y",
+    # Install Docker + curl
+    "sudo apt install docker.io curl snapd -y",
 
-      # Start Docker
-      "sudo systemctl start docker",
-      "sudo systemctl enable docker",
+    # Start Docker
+    "sudo systemctl start docker",
+    "sudo systemctl enable docker",
 
-      # Add ubuntu user to docker group
-      "sudo usermod -aG docker ubuntu",
+    # Install kubectl
+    "sudo snap install kubectl --classic",
 
-      # Install kubectl
-      "sudo snap install kubectl --classic",
+    # Install Minikube
+    "curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64",
 
-      # Install Minikube
-      "curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64",
+    "chmod +x minikube-linux-amd64",
 
-      "chmod +x minikube-linux-amd64",
+    "sudo mv minikube-linux-amd64 /usr/local/bin/minikube",
 
-      "sudo mv minikube-linux-amd64 /usr/local/bin/minikube",
+    # Start Minikube
+    "sudo minikube start --driver=docker --force",
 
-      # Start Minikube
-      "minikube start --driver=docker",
+    # Create app directory
+    "mkdir -p /home/ubuntu/app",
 
-      # Create app directory
-      "mkdir -p /home/ubuntu/app",
+    # Copy files
+    "sudo cp /home/ubuntu/dockerfile /home/ubuntu/app/",
+    "sudo cp /home/ubuntu/index.html /home/ubuntu/app/",
+    "sudo cp /home/ubuntu/deployment.yml /home/ubuntu/app/",
+ 
 
-      # Copy files
-      "cp /home/ubuntu/Dockerfile /home/ubuntu/app/",
-      "cp /home/ubuntu/index.html /home/ubuntu/app/",
-      "cp /home/ubuntu/deployment.yml /home/ubuntu/app/",
-      "cp /home/ubuntu/service.yml /home/ubuntu/app/",
+    # Build Docker image
+    "cd /home/ubuntu/app && sudo docker build -t my-apache .",
+    "sudo docker images",
+    "sudo docker ps",
 
-      # Build Docker image
-      "cd /home/ubuntu/app && sudo docker build -t my-apache .",
-      "sudo docker images",
+    # Load image into Minikube
+    "sudo minikube image load my-apache",
 
-      # Load image into Minikube
-      "cd /home/ubuntu/app",
-
-      # Deploy to Kubernetes
-      "kubectl apply -f deployment.yml",
+    # Deploy application
+    "kubectl apply -f /home/ubuntu/app/deployment.yml",
 
 
-      # Verify
-      "kubectl get pods",
-      "kubectl get svc",
-      "kubectl get nodes"
-    ]
-  }
+    # Verify
+    "kubectl get pods",
+    "kubectl get svc",
+    "kubectl get nodes"
+  ]
+}
 
   tags = {
     Name = "my-ec2"
