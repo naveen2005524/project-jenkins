@@ -158,9 +158,8 @@ resource "aws_instance" "my-ec2" {
     "cd /home/ubuntu/app && sudo docker build -t my-apache .",
     "sudo docker images",
     "sudo docker ps",
+    "sudo stop my-apache",
 
-    # Load image into Minikube
-    "sudo minikube image load my-apache",
 
     # Deploy application
     "kubectl apply -f /home/ubuntu/app/deployment.yml",
