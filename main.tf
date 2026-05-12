@@ -160,16 +160,14 @@ resource "aws_instance" "my-ec2" {
 
       # Build Docker image
       "cd /home/ubuntu/app && sudo docker build -t my-apache .",
+      "sudo docker images",
 
       # Load image into Minikube
-      "minikube image load my-apache",
       "cd /home/ubuntu/app",
 
       # Deploy to Kubernetes
-      "kubectl apply -f /home/ubuntu/app/deployment.yml",
+      "kubectl apply -f deployment.yml",
 
-      # Create service
-      "kubectl apply -f /home/ubuntu/app/service.yml",
 
       # Verify
       "kubectl get pods",
