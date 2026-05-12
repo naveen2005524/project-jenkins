@@ -115,26 +115,36 @@ resource "aws_instance" "my-ec2" {
   }
 
   provisioner "file" {
-    source = "./deployment.yml"
+    source = "deployment.yml"
     destination = "/home/ubuntu/deployment.yml"
   }
 
   provisioner "remote-exec" {
     inline = [
-      "sudo apt-get update",
-      "sudo apt-get install docker.io -y",
+      "sudo apt-get update -y",
+      "sudo apt-get install -y docker.io snapd",
+      "sudo systemctl start docker",
+      "sudo systemctl enable docker",
       "sudo usermod -aG docker ubuntu",
+
+      # Install kubectl via snap (official method for Ubuntu)
+      "sudo snap install kubectl --classic",
+
+      # Set up app directory
       "sudo mkdir -p /home/ubuntu/app",
-      "sudo cp dockerfile /home/ubuntu/app/",
-      "sudo cp index.html /home/ubuntu/app/",
-      "sudo cp deployment.yml /home/ubuntu/app/",
-      "cd /home/ubuntu/app",
-      "sudo docker build -t my-apache .",
-      "curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl",
-      "chmod +x kubectl",
-      "sudo mv kubectl /usr/local/bin/",
-      "sudo chmod +x /home/ubuntu/app/deployment.yml",
-      "sudo kubectl apply -f deployment.yml",
+      "sudo cp /home/ubuntu/dockerfile /home/ubuntu/app/",
+      "sudo cp /home/ubuntu/index.html /home/ubuntu/app/",
+      "sudo cp /home/ubuntu/deployment.yml /home/ubuntu/app/",
+
+      # Build and run Docker image (cd must be in same command)
+      "cd /home/ubuntu/app && sudo docker build -t my-apache .",
+      "sudo docker run -d -p 5000:80 --name apache-container my-apache",
+
+      # Verify kubectl
+      "kubectl version --client",
+
+      # Apply Kubernetes manifests
+      "sudo kubectl apply -f /home/ubuntu/app/deployment.yml",
       "sudo kubectl get pods",
       "sudo kubectl get svc",
       "sudo kubectl get nodes"
