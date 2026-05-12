@@ -139,6 +139,8 @@ resource "aws_instance" "my-ec2" {
       # Build and run Docker image (cd must be in same command)
       "cd /home/ubuntu/app && sudo docker build -t my-apache .",
       "sudo docker run -d -p 5000:80 --name apache-container my-apache",
+      "sudo docker stop apache-container",
+      "sudo docker rm apache-container",
 
       # Verify kubectl
       "kubectl version --client",
