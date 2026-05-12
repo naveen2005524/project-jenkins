@@ -14,10 +14,10 @@ pipeline {
                 sh "terraform output public_ip"
             }
         }
-        // stage('destroy') {
-        //     steps {
-        //         sh "terraform destroy -auto-approve"
-        //     }
-        // }
+        stage('destroy') {
+            steps {
+                sh "terraform destroy -auto-approve"
+            }
+        }
     }
 }
