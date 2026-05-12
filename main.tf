@@ -114,61 +114,36 @@ resource "aws_instance" "my-ec2" {
     destination = "/home/ubuntu/index.html"
   }
 
-  provisioner "file" {
-    source = "deployment.yml"
-    destination = "/home/ubuntu/deployment.yml"
-  }
-
-  provisioner "remote-exec" {
+ provisioner "remote-exec" {
 
   inline = [
 
-    "sudo apt update -y",
+    # Update packages
+    "sudo apt-get update -y",
 
-    # Install Docker + curl
-    "sudo apt install docker.io curl snapd -y",
+    # Install Docker
+    "sudo apt-get install docker.io -y",
 
     # Start Docker
     "sudo systemctl start docker",
     "sudo systemctl enable docker",
 
-    # Install kubectl
-    "sudo snap install kubectl --classic",
-
-    # Install Minikube
-    "curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64",
-
-    "chmod +x minikube-linux-amd64",
-
-    "sudo mv minikube-linux-amd64 /usr/local/bin/minikube",
-
-    # Start Minikube
-    "sudo minikube start --driver=docker --force",
-
-    # Create app directory
-    "mkdir -p /home/ubuntu/app",
+    # Create directory
+    "sudo mkdir -p /var/www/localhost/htdocs/",
 
     # Copy files
-    "sudo cp /home/ubuntu/dockerfile /home/ubuntu/app/",
-    "sudo cp /home/ubuntu/index.html /home/ubuntu/app/",
-    "sudo cp /home/ubuntu/deployment.yml /home/ubuntu/app/",
- 
+    "sudo cp /home/ubuntu/Dockerfile /var/www/localhost/htdocs/",
+    "sudo cp /home/ubuntu/index.html /var/www/localhost/htdocs/",
 
     # Build Docker image
-    "cd /home/ubuntu/app && sudo docker build -t my-apache .",
-    "sudo docker images",
-    "sudo docker ps",
-    "sudo stop my-apache",
+    "cd /var/www/localhost/htdocs",
+    "sudo docker build -t my-apache .",
 
+    # Run container
+    "sudo docker run -d -p 5000:80 --name apache-container my-apache",
 
-    # Deploy application
-    "kubectl apply -f /home/ubuntu/app/deployment.yml",
-
-
-    # Verify
-    "kubectl get pods",
-    "kubectl get svc",
-    "kubectl get nodes"
+    # Verify container
+    "sudo docker ps"
   ]
 }
 
