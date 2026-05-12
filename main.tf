@@ -37,19 +37,20 @@ resource "aws_subnet" "my-public" {
 resource "aws_route_table" "my-rot" {
     vpc_id = aws_vpc.my-vpc.id
 
+    route {
+      cidr_block = "0.0.0.0/0"
+      gateway_id = aws_internet_gateway.my-gat.id
+    }
+
     tags = {
         Name = "my-rot"
     }
 }
 
-resource "aws_subnet_route_table_association" "my-assoc" {
+resource "aws_route_table_association" "my-assoc" {
   route_table_id = aws_route_table.my-rot.id
   subnet_id = aws_subnet.my-public.id
 
-  route{
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.my-gat.id
-  }
 }
 
 resource "aws_security_group" "my-sg" {
@@ -129,8 +130,4 @@ resource "aws_instance" "my-ec2" {
 
 output "public_ip" {
   value = aws_instance.my-ec2.public_ip
-}
-
-output "public_dns" {
-  value = aws_instance.my-ec2.public_dns_name
 }
