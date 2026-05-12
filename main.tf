@@ -89,7 +89,7 @@ resource "aws_security_group" "my-sg" {
 }
 
 resource "aws_instance" "my-ec2" {
-  ami = "ami-0c55b159cbfafe1f0" #Ubuntu 24.04
+  ami = "ami-03f4878755434977f" #Ubuntu 24.04
   instance_type = "t3.micro"
   subnet_id = aws_subnet.my-public.id
   key_name = "awskey"
