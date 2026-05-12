@@ -100,7 +100,7 @@ resource "aws_instance" "my-ec2" {
   connection {
     type = "ssh"
     user = "ubuntu"
-    private_key = file("C:/Users/nb367/OneDrive/Desktop/helloo/awskey.pem")
+    private_key = file("awskey.pem")
     host = aws_instance.my-ec2.public_ip
   }
 
