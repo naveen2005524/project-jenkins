@@ -12,13 +12,12 @@ pipeline {
         stage('outputs') {
             steps {
                 sh "terraform output public_ip"
-                sh "terraform output public_dns"
             }
         }
-        // stage('destroy') {
-        //     steps {
-        //         sh "terraform destroy -auto-approve"
-        //     }
-        // }
+        stage('destroy') {
+            steps {
+                sh "terraform destroy -auto-approve"
+            }
+        }
     }
 }
