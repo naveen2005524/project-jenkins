@@ -105,40 +105,58 @@ resource "aws_instance" "my-ec2" {
   }
 
   provisioner "file" {
-    source = "./dockerfile"
-    destination = "/home/ubuntu/dockerfile"
-  }
+  source      = "./Dockerfile"
+  destination = "/home/ubuntu/Dockerfile"
+}
 
-  provisioner "file" {
-    source = "./index.html"
-    destination = "/home/ubuntu/index.html"
-  }
+provisioner "file" {
+  source      = "./index.html"
+  destination = "/home/ubuntu/index.html"
+}
 
-  provisioner "file" {
-    source = "./deployment.yml"
-    destination = "/home/ubuntu/deployment.yml"
-  }
+provisioner "file" {
+  source      = "./deployment.yml"
+  destination = "/home/ubuntu/deployment.yml"
+}
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo apt-get update",
-      "sudo apt-get install docker.io -y",
-      "sudo mkdir -p /home/ubuntu/var/www/localhost/htdocs/",
-      "sudo cp dockerfile /home/ubuntu/var/www/localhost/htdocs/",
-      "sudo cp index.html /home/ubuntu/var/www/localhost/htdocs/",
-      "sudo cp deployment.yml /home/ubuntu/var/www/localhost/htdocs/",
-      "sudo chmod +x /home/ubuntu/var/www/localhost/htdocs/dockerfile",
-      "cd /home/ubuntu/var/www/localhost/htdocs",
-      "sudo docker build -t my-apache .",
-      "sudo apt-get install kubectl -y",
-      "sudo chmod +x /home/ubuntu/var/www/localhost/htdocs/deployment.yml",
-      "sudo kubectl apply -f deployment.yml",
-      "sudo kubectl get pods",
-      "sudo kubectl get svc",
-      "sudo kubectl get nodes"
-    ]
-  }
+provisioner "remote-exec" {
+  inline = [
 
+    # Update packages
+    "sudo apt-get update -y",
+
+    # Install Docker
+    "sudo apt-get install docker.io -y",
+
+    # Start Docker
+    "sudo systemctl start docker",
+    "sudo systemctl enable docker",
+
+    # Create app directory
+    "mkdir -p /home/ubuntu/app",
+
+    # Copy files
+    "cp /home/ubuntu/Dockerfile /home/ubuntu/app/",
+    "cp /home/ubuntu/index.html /home/ubuntu/app/",
+    "cp /home/ubuntu/deployment.yml /home/ubuntu/app/",
+
+    # Build Docker image
+    "cd /home/ubuntu/app && sudo docker build -t my-apache .",
+
+    # Run container
+    "sudo docker run -d -p 80:80 --name apache-container my-apache",
+
+    # Install kubectl
+    "curl -LO https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl",
+
+    "chmod +x kubectl",
+
+    "sudo mv kubectl /usr/local/bin/",
+
+    # Verify kubectl
+    "kubectl version --client"
+  ]
+}
   tags = {
     Name = "my-ec2"
   }
