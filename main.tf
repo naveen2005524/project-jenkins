@@ -206,8 +206,6 @@ resource "aws_instance" "my-ec2" {
       # Deploy to Kubernetes
       "kubectl apply -f /home/ubuntu/app/deployment.yml",
 
-      # Create service
-      "kubectl apply -f /home/ubuntu/app/service.yml",
 
       # Verify
       "kubectl get pods",
