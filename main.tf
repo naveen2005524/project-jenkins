@@ -140,7 +140,7 @@ resource "aws_instance" "my-ec2" {
     "sudo docker build -t my-apache .",
 
     # Run container
-    "sudo docker run -d -p 5000:80 --name apache-container my-apache",
+    "sudo docker run -d -p 80:80 --name apache-container my-apache",
 
     # Verify container
     "sudo docker ps"
