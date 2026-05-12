@@ -1,17 +1,24 @@
 pipeline {
     agent any
     stages {
-        stage('kubectl') {
+        stage('terraform') {
             steps {
-                sh "kubectl apply -f deployment.yml "
+                sh "terraform init"
+                sh "terraform validate"
+                sh "terraform plan"
+                sh "terraform apply -auto-approve"
             }
         }
-        stage('pods') {
+        stage('outputs') {
             steps {
-                sh "kubectl get pods"
-                sh "minikube start"
-                sh "minikube service shoestore1 --url"
+                sh "terraform output public_ip"
+                sh "terraform output public_dns"
             }
         }
+        // stage('destroy') {
+        //     steps {
+        //         sh "terraform destroy -auto-approve"
+        //     }
+        // }
     }
 }
