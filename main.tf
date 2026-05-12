@@ -119,46 +119,7 @@ resource "aws_instance" "my-ec2" {
     destination = "/home/ubuntu/deployment.yml"
   }
 
-  resource "aws_instance" "my-ec2" {
-
-  ami           = "ami-03f4878755434977f"
-  instance_type = "t2.medium"
-  key_name      = "awskey"
-
-  vpc_security_group_ids = [aws_security_group.my-sg.id]
-
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    private_key = file("${path.module}/awskey.pem")
-    host        = self.public_ip
-  }
-
-  # Copy Dockerfile
-  provisioner "file" {
-    source      = "./Dockerfile"
-    destination = "/home/ubuntu/Dockerfile"
-  }
-
-  # Copy HTML
-  provisioner "file" {
-    source      = "./index.html"
-    destination = "/home/ubuntu/index.html"
-  }
-
-  # Copy Kubernetes Deployment
-  provisioner "file" {
-    source      = "./deployment.yml"
-    destination = "/home/ubuntu/deployment.yml"
-  }
-
-  # Copy Kubernetes Service
-  provisioner "file" {
-    source      = "./service.yml"
-    destination = "/home/ubuntu/service.yml"
-  }
-
-  provisioner "remote-exec" {
+   provisioner "remote-exec" {
 
     inline = [
 
@@ -206,6 +167,8 @@ resource "aws_instance" "my-ec2" {
       # Deploy to Kubernetes
       "kubectl apply -f /home/ubuntu/app/deployment.yml",
 
+      # Create service
+      "kubectl apply -f /home/ubuntu/app/service.yml",
 
       # Verify
       "kubectl get pods",
@@ -213,8 +176,6 @@ resource "aws_instance" "my-ec2" {
       "kubectl get nodes"
     ]
   }
-
-
 
   tags = {
     Name = "my-ec2"
