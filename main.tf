@@ -119,39 +119,104 @@ resource "aws_instance" "my-ec2" {
     destination = "/home/ubuntu/deployment.yml"
   }
 
+  resource "aws_instance" "my-ec2" {
+
+  ami           = "ami-03f4878755434977f"
+  instance_type = "t2.medium"
+  key_name      = "awskey"
+
+  vpc_security_group_ids = [aws_security_group.my-sg.id]
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = file("${path.module}/awskey.pem")
+    host        = self.public_ip
+  }
+
+  # Copy Dockerfile
+  provisioner "file" {
+    source      = "./Dockerfile"
+    destination = "/home/ubuntu/Dockerfile"
+  }
+
+  # Copy HTML
+  provisioner "file" {
+    source      = "./index.html"
+    destination = "/home/ubuntu/index.html"
+  }
+
+  # Copy Kubernetes Deployment
+  provisioner "file" {
+    source      = "./deployment.yml"
+    destination = "/home/ubuntu/deployment.yml"
+  }
+
+  # Copy Kubernetes Service
+  provisioner "file" {
+    source      = "./service.yml"
+    destination = "/home/ubuntu/service.yml"
+  }
+
   provisioner "remote-exec" {
+
     inline = [
-      "sudo apt-get update -y",
-      "sudo apt-get install -y docker.io snapd",
+
+      # Update packages
+      "sudo apt update -y",
+
+      # Install Docker
+      "sudo apt install docker.io -y",
+
+      # Start Docker
       "sudo systemctl start docker",
       "sudo systemctl enable docker",
+
+      # Add ubuntu user to docker group
       "sudo usermod -aG docker ubuntu",
 
-      # Install kubectl via snap (official method for Ubuntu)
+      # Install kubectl
       "sudo snap install kubectl --classic",
 
-      # Set up app directory
-      "sudo mkdir -p /home/ubuntu/app",
-      "sudo cp /home/ubuntu/dockerfile /home/ubuntu/app/",
-      "sudo cp /home/ubuntu/index.html /home/ubuntu/app/",
-      "sudo cp /home/ubuntu/deployment.yml /home/ubuntu/app/",
+      # Install Minikube
+      "curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64",
 
-      # Build and run Docker image (cd must be in same command)
+      "chmod +x minikube-linux-amd64",
+
+      "sudo mv minikube-linux-amd64 /usr/local/bin/minikube",
+
+      # Start Minikube
+      "minikube start --driver=docker",
+
+      # Create app directory
+      "mkdir -p /home/ubuntu/app",
+
+      # Copy files
+      "cp /home/ubuntu/Dockerfile /home/ubuntu/app/",
+      "cp /home/ubuntu/index.html /home/ubuntu/app/",
+      "cp /home/ubuntu/deployment.yml /home/ubuntu/app/",
+      "cp /home/ubuntu/service.yml /home/ubuntu/app/",
+
+      # Build Docker image
       "cd /home/ubuntu/app && sudo docker build -t my-apache .",
-      "sudo docker run -d -p 5000:80 --name apache-container my-apache",
-      "sudo docker stop apache-container",
-      "sudo docker rm apache-container",
 
-      # Verify kubectl
-      "kubectl version --client",
+      # Load image into Minikube
+      "minikube image load my-apache",
 
-      # Apply Kubernetes manifests
-      "sudo kubectl apply -f /home/ubuntu/app/deployment.yml",
-      "sudo kubectl get pods",
-      "sudo kubectl get svc",
-      "sudo kubectl get nodes"
+      # Deploy to Kubernetes
+      "kubectl apply -f /home/ubuntu/app/deployment.yml",
+
+      # Create service
+      "kubectl apply -f /home/ubuntu/app/service.yml",
+
+      # Verify
+      "kubectl get pods",
+      "kubectl get svc",
+      "kubectl get nodes"
     ]
   }
+
+
 
   tags = {
     Name = "my-ec2"
