@@ -114,17 +114,30 @@ resource "aws_instance" "my-ec2" {
     destination = "/home/ubuntu/index.html"
   }
 
+  provisioner "file" {
+    source = "./deployment.yml"
+    destination = "/home/ubuntu/deployment.yml"
+  }
+
   provisioner "remote-exec" {
     inline = [
       "sudo apt-get update",
       "sudo apt-get install docker.io -y",
+      "sudo usermod -aG docker ubuntu",
+      "sudo apt-get install kubectl -y",
       "sudo mkdir -p /home/ubuntu/var/www/localhost/htdocs/",
       "sudo cp dockerfile /home/ubuntu/var/www/localhost/htdocs/",
       "sudo cp index.html /home/ubuntu/var/www/localhost/htdocs/",
+      "sudo cp deployment.yml /home/ubuntu/var/www/localhost/htdocs/",
       "sudo chmod +x /home/ubuntu/var/www/localhost/htdocs/dockerfile",
+      "sudo chmod +x /home/ubuntu/var/www/localhost/htdocs/deployment.yml",
       "cd /home/ubuntu/var/www/localhost/htdocs",
       "sudo docker build -t my-apache .",
-      "sudo docker run -d -p 5000:80 my-apache"
+      "sudo docker run -d -p 5000:80 my-apache",
+      "sudo kubectl apply -f deployment.yml",
+      "sudo kubectl get pods",
+      "sudo kubectl get svc",
+      "sudo kubectl get nodes"
     ]
   }
 
